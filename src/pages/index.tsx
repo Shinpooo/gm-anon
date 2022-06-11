@@ -21,7 +21,7 @@ const Home: FC = () => {
 						<div className='my-auto'><ConnectWallet /></div>
 					</div>
 				</div> */}
-				<div className='text-white text-4xl font-bold mb-8'>Askme helps connecting content creators to their community. <br></br>No signup, All you need is a lens profile. <br></br> Try it <a href="askmelens.vercel.app/profile/0xtestinprod.lens" className='underline' rel='noreferrer' target="_blank">here</a> 👈</div>
+				<div className='text-white text-4xl font-bold mb-8'>Askme helps connecting content creators to their community. <br></br>No signup, All you need is a lens profile. <br></br> Try it <a href="profile/0xtestinprod.lens" className='underline' rel='noreferrer' target="_blank">here</a> 👈</div>
 				{/* <div className='text-white text-2xl font-bold mb-8'>1 - As a content creator: Filter the mass amount of question by monetizing your time helping/answering others</div> */}
 				{/* <div className='text-white text-2xl font-bold mb-8'>2 - As a community member, ask anything you want</div> */}
 				<div className="mx-auto w-full">
