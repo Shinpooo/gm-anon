@@ -1,1 +1,2 @@
-export const APP_NAME = 'dApp Starter'
+export const APP_NAME = 'Gm Anon'
+export const API_URL = 'https://api.lens.dev/'
