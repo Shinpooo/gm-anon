@@ -109,6 +109,7 @@ const ViewProfile: NextPage = () => {
                     />
                     <button className='bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300'>Ask for 1 <Image src={matic} height="24px" width="24px"></Image></button>
     </div>
+    <p className='mt-2 font-light'>Payment is locked in the smart contract until you get a reply. <br></br>Redeem your payment anytime by burning your question NFT!</p>
    
                     
       {/* {profile?.name ? (

@@ -21,7 +21,7 @@ const App = ({ Component, pageProps }) => {
 			<RainbowKitProvider chains={chains} coolMode theme={midnightTheme()}>
 				<ApolloProvider client={apollo}>
 						<div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen">
-							<div className="mx-auto w-full mb-10 py-16 max-w-4xl">
+							<div className="mx-auto w-full mb-4 py-16 max-w-4xl">
 								<div className="flex justify-between pt-8 sm:pt-0">
 									<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white">🙋 Askme</h1>
 									<div className='my-auto'><ConnectWallet /></div>
