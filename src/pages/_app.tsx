@@ -6,7 +6,7 @@ import { Chain, apiProvider, configureChains, getDefaultWallets, RainbowKitProvi
 import apollo from '@/lib/apollo'
 import { ApolloProvider } from '@apollo/client'
 import ConnectWallet from '../components/ConnectWallet'
-
+import Link from 'next/link'
 const { chains, provider } = configureChains(
 	[chain.polygon],
 	[apiProvider.infura(process.env.NEXT_PUBLIC_INFURA_ID), apiProvider.fallback()]
@@ -20,15 +20,28 @@ const App = ({ Component, pageProps }) => {
 		<WagmiConfig client={wagmiClient}>
 			<RainbowKitProvider chains={chains} coolMode theme={midnightTheme()}>
 				<ApolloProvider client={apollo}>
-						<div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen">
-							<div className="mx-auto w-full mb-4 py-16 max-w-4xl">
-								<div className="flex justify-between pt-8 sm:pt-0">
-									<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white">🙋 Askme</h1>
-									<div className='my-auto'><ConnectWallet /></div>
+					<div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen">
+						<div className="mx-auto w-full mb-4 py-16 max-w-5xl">
+							<div className="flex justify-between pt-8 sm:pt-0">
+								<Link href="/">
+									<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white cursor-pointer">
+										🙋 CuriousMonke
+									</h1>
+								</Link>
+								<div className="flex gap-8">
+									<Link href="/">
+										<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
+											My Profile
+										</p>
+									</Link>
+									<div className="my-auto">
+										<ConnectWallet />
+									</div>
 								</div>
 							</div>
-							<Component {...pageProps} />
 						</div>
+						<Component {...pageProps} />
+					</div>
 				</ApolloProvider>
 			</RainbowKitProvider>
 		</WagmiConfig>

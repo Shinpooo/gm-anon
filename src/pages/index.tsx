@@ -4,14 +4,26 @@ import { BookOpenIcon, CodeIcon, ShareIcon } from '@heroicons/react/outline'
 import ConnectWallet from '../components/ConnectWallet'
 import LOAD_PROFILE from '@/queries/load-profile'
 import { useQuery } from '@apollo/client'
-
+import { useRouter } from 'next/router'
 
 const Home: FC = () => {
 	// const { data, loading } = useQuery(LOAD_PROFILE, {
 	// })
 	// const profile = data.items
 	// console.log(profile)
-
+	const router = useRouter()
+	function searchProfile(e){
+      if(e.keyCode == 13){
+         console.log('value', e.target.value);
+		 let handle = e.target.value
+		 if (handle.substr(handle.length - 5) === ".lens"){
+			router.push('/profile/' + handle)
+		 } else {
+			router.push('/profile/' + handle + ".lens")
+		 }
+         
+      }
+   }
 	return (
 		<>
 			<div className="relative flex flex-col justify-around min-h-screen py-4 dark items-top dark:bg-gray-900 sm:items-center sm:pt-0 max-w-4xl mx-auto px-6">
@@ -21,12 +33,59 @@ const Home: FC = () => {
 						<div className='my-auto'><ConnectWallet /></div>
 					</div>
 				</div> */}
-				<div className='text-white text-4xl font-bold mb-8'>Askme helps connecting content creators to their community. <br></br>No signup, All you need is a lens profile. <br></br> Try it <a href="profile/lenster.lens" className='underline' rel='noreferrer' target="_blank">here</a> 👈</div>
+				<div>
+					<div className="text-white text-4xl font-bold mb-8">
+						Curious about something? 🤔 Just ask someone.
+						{/* <br></br> Try it{' '}
+					<a href="profile/lenster.lens" className="underline" rel="noreferrer" target="_blank">
+						here
+					</a>{' '}
+					👈 */}
+					</div>
+					<label className="relative block w-full">
+						<span className="absolute inset-y-0 left-0 flex items-center pl-2">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="h-5 w-5"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+						</span>
+						<input
+							className="placeholder:bold placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-orange-500 focus:ring-orange-500 focus:ring-1 text-2xl"
+							placeholder="vitalik.lens"
+							type="text"
+							name="search"
+							onKeyDown={searchProfile}
+						/>
+					</label>
+				</div>
+				{/* <div className="flex bg-white">
+					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+						<path
+							fill-rule="evenodd"
+							d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+					<input
+						placeholder="vitalik.lens"
+						className="w-1/2 mx-10 enabled:border-yellow-400 p-2 text-base placeholder-gray bg-gray-100 font-mlp-thin rounded-xl mb-2 border-transparent"
+						// onChange={}
+						// value={".lens"}
+					/>
+				</div> */}
+
 				{/* <div className='text-white text-2xl font-bold mb-8'>1 - As a content creator: Filter the mass amount of question by monetizing your time helping/answering others</div> */}
 				{/* <div className='text-white text-2xl font-bold mb-8'>2 - As a community member, ask anything you want</div> */}
 				<div className="mx-auto w-full">
-
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 						{/* <div className="bg-gradient-to-r from-orange-600  to-violet-800 rounded-xl justify-center inline-block px-2 py-16 text-4xl text-center text-gray-200 font-semibold hover:bg-ape hover:text-transparent transtion duration-300 ease-out hover:ease-in hover:-translate-y-1 hover:scale-110 hover:bg-cover">
 							<p className='text-4xl'>Building things 💻</p>
 							<p className='text-lg'>Currently focused on web3 projects</p>
@@ -58,8 +117,6 @@ const Home: FC = () => {
 							<p className='text-lg'>Push, pull, legs, street</p>
 						</div> */}
 
-						
-
 						{/* <div className="bg-gradient-to-r from-orange-600  to-violet-800 rounded-xl justify-center inline-block px-2 py-16 text-4xl text-center text-gray-200 font-semibold hover:bg-livai hover:text-transparent transtion duration-300 ease-out hover:ease-in hover:-translate-y-1 hover:scale-110">
 							<p className='text-4xl'>Design</p>
 							<p className='text-lg'>100% newbie in 3D design and 2D animation</p>
@@ -69,7 +126,7 @@ const Home: FC = () => {
 							<p className='text-4xl'>Quest</p>
 							<p className='text-lg'>The whole purpose of this website</p>
 						</div> */}
-						
+
 						{/* <div className='bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 rounded-2xl justify-center inline-block px-2 py-8 text-xl text-center text-black'>Investooor</div>
 						<div className='bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 rounded-2xl justify-center inline-block px-2 py-8 text-xl text-center text-black'>Anime</div>
 						<div className='bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 rounded-2xl justify-center inline-block px-2 py-8 text-xl text-center text-black'>Gaming</div>
@@ -201,7 +258,7 @@ const Home: FC = () => {
 							</div>
 						</div>
 					</div> */}
-					
+
 					{/* <div className="flex justify-center mt-4 sm:items-center sm:justify-between">
 						<div className="text-sm text-center text-gray-500 sm:text-left">
 							<div className="flex items-center">
