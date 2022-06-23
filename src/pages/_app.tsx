@@ -1,19 +1,21 @@
 import 'tailwindcss/tailwind.css'
 import { APP_NAME } from '@/lib/consts'
 import '@rainbow-me/rainbowkit/styles.css'
-import { chain, createClient, WagmiConfig } from 'wagmi'
+import { chain, createClient, WagmiConfig, useAccount } from 'wagmi'
 import { Chain, apiProvider, configureChains, getDefaultWallets, RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit'
 import apollo from '@/lib/apollo'
 import { ApolloProvider } from '@apollo/client'
 import ConnectWallet from '../components/ConnectWallet'
 import Link from 'next/link'
-const { chains, provider } = configureChains(
-	[chain.polygon],
-	[apiProvider.infura(process.env.NEXT_PUBLIC_INFURA_ID), apiProvider.fallback()]
-)
 
-const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
-const wagmiClient = createClient({ autoConnect: true, connectors, provider })
+
+const { chains, provider } = configureChains(
+		[chain.polygon],
+		[apiProvider.infura(process.env.NEXT_PUBLIC_INFURA_ID), apiProvider.fallback()]
+	)
+
+	const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
+	const wagmiClient = createClient({ autoConnect: true, connectors, provider })
 
 const App = ({ Component, pageProps }) => {
 	return (
@@ -29,11 +31,14 @@ const App = ({ Component, pageProps }) => {
 									</h1>
 								</Link>
 								<div className="flex gap-8">
-									<Link href="/">
-										<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
-											My Profile
-										</p>
-									</Link>
+									{
+										true ? <Link href="/">
+											<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
+												My Profile
+											</p>
+										</Link> : <></>
+									}
+									
 									<div className="my-auto">
 										<ConnectWallet />
 									</div>

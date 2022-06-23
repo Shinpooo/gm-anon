@@ -9,7 +9,7 @@ const ConnectWallet: FC<{ show?: Visibility }> = ({ show = 'always' }) => {
 
 	if ((show == 'connected' && !account?.address) || (show == 'not_connected' && account?.address)) return null
 
-	return <ConnectButton />
+	return <ConnectButton chainStatus="icon" />
 }
 
 export default ConnectWallet

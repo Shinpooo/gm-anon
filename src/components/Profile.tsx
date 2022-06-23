@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import consoleLog from '../lib/consoleLog'
 import Image from 'next/image'
 import matic from '../../public/images/matic.png'
-import { useContractRead } from 'wagmi'
+import { useContractRead, useAccount, useContractWrite } from 'wagmi'
 import askme_abi from '../abis/AskMe.json'
 import { ethers } from 'ethers'
 
@@ -52,9 +52,12 @@ export const PROFILE_QUERY = gql`
 `
 
 const ViewProfile: NextPage = () => {
+  const [newAskFee, setNewAskFee] = useState<string>("0")
+  const [questionText, setQuestionText] = useState<string>('')
   const {
     query: { username, type }
   } = useRouter()
+  const { data:account } = useAccount()
 //   const [feedType, setFeedType] = useState<string>(
 //     type && ['post', 'comment', 'mirror', 'nft'].includes(type as string)
 //       ? type?.toString().toUpperCase()
@@ -72,7 +75,7 @@ const ViewProfile: NextPage = () => {
     }
   })
 
-  const contractRead = useContractRead(
+  const isActive = useContractRead(
 		{
 			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
 			contractInterface: askme_abi,
@@ -85,7 +88,31 @@ const ViewProfile: NextPage = () => {
 			},
 		}
   )
-  console.log(contractRead)
+
+  const {
+		data: updateprofile,
+		isError,
+		isLoading,
+		write:updatefee,
+  } = useContractWrite(
+		{
+			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+			contractInterface: askme_abi,
+		},
+		'updateProfile',
+		{
+			args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), data?.profiles?.items[0].id],
+			onSuccess(updateProfile) {
+				console.log('Success', updateProfile)
+			},
+		}
+  )
+
+  
+
+
+  
+  console.log(account)
 
   const {
 		data: askfee,
@@ -99,6 +126,27 @@ const ViewProfile: NextPage = () => {
 			args: data?.profiles?.items[0].id,
 			onSuccess(askfee) {
 				console.log('Success', ethers.utils.formatUnits(askfee.toString(), 18))
+			},
+		}
+  )
+
+  const {
+		data: askdata,
+		isLoading: askLoading,
+		write: askquestion,
+  } = useContractWrite(
+		{
+			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+			contractInterface: askme_abi,
+		},
+		'mint',
+		{
+			args: [questionText, data?.profiles?.items[0].id],
+			onSuccess(askquestion) {
+				console.log('Success', askquestion)
+			},
+			overrides: {
+				value: askfee,
 			},
 		}
   )
@@ -117,7 +165,7 @@ const ViewProfile: NextPage = () => {
 //   if (data?.profiles?.items?.length === 0) return <Custom404 />
 
   const profile = data?.profiles?.items[0]
-  
+  console.log(profile?.ownedBy)
   return (
 		<div className="relative max-w-4xl mx-auto min-h-screen">
 			{profile?.coverPicture ? (
@@ -131,9 +179,12 @@ const ViewProfile: NextPage = () => {
 				</div>
 			</div>
 			<div className="bg-gray-200 w-full mx-auto flex justify-center pt-32 pb-4 flex-col text-center rounded-md">
+				<p className="relative bottom-0 inset-x-0 top-0  flex mx-auto justify-center">
+					supppppppppppppppppppppppppp
+				</p>
 				<p className="text-4xl font-bold">{profile?.name}</p>
 				<p>@{profile?.handle}</p>
-				<div className="flex justify-center gap-4 mb-10">
+				<div className="flex justify-center gap-4 mb-10 mt-4">
 					<div className="flex flex-col justify-center">
 						<p className="text-xl">{profile?.stats?.totalFollowers}</p>
 						<p>Followers </p>
@@ -147,7 +198,7 @@ const ViewProfile: NextPage = () => {
 						<p>Answers </p>
 					</div>
 					<div className="flex flex-col justify-center">
-						<p className="text-xl">{contractRead?.fetchStatus}</p>
+						<p className="text-xl">{isActive?.data.toString()}</p>
 						<p>is Active </p>
 					</div>
 					<div className="flex flex-col justify-center">
@@ -155,15 +206,38 @@ const ViewProfile: NextPage = () => {
 						<p>is Active </p>
 					</div>
 				</div>
-				<input
-					placeholder={'Ask me anything'}
-					className="mx-10 enabled:border-yellow-400 p-2 text-base placeholder-black bg-gray-100 placeholder-opacity-50 font-mlp-thin pb-12 rounded-xl mb-2"
-					// onChange={}
-					// value={}
-				/>
-				<button className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300">
-					Ask for 1 <Image src={matic} height="24px" width="24px"></Image>
-				</button>
+				{profile?.ownedBy === account?.address ? (
+					<div className="flex justify-center">
+						<div className="flex flex-col">
+							<p className="text-sm">Ask fee (MATIC):</p>
+							<input
+								placeholder={'1'}
+								className="mx-auto enabled:border-yellow-400 p-2 text-base placeholder-black bg-gray-100 placeholder-opacity-50 font-mlp-thin rounded-xl mb-2"
+								onChange={e => setNewAskFee(e.target.value)}
+								// value={}
+							/>
+							<button
+								className="bg-yellow-500 mx-auto px-4 py-2 items-center rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300"
+								onClick={() => updatefee()}
+							>
+								Activate Account
+							</button>
+						</div>
+					</div>
+				) : (
+					<>
+						<input
+							placeholder={'Ask me anything'}
+							className="mx-10 enabled:border-yellow-400 p-2 text-base placeholder-black bg-gray-100 placeholder-opacity-50 font-mlp-thin pb-12 rounded-xl mb-2"
+							// onChange={}
+							// value={}
+						/>
+						<button className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300" onClick={() => askquestion()}>
+							Ask for {ethers.utils.formatUnits(askfee.toString(), 18)}
+							<Image src={matic} height="24px" width="24px"></Image>
+						</button>
+					</>
+				)}
 			</div>
 			<p className="mt-2 font-light">
 				Payment is locked in the smart contract until you get a reply. <br></br>Redeem your payment anytime by
