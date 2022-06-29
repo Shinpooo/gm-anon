@@ -5,168 +5,171 @@ import React, { useEffect, useState } from 'react'
 import consoleLog from '../lib/consoleLog'
 import Image from 'next/image'
 import matic from '../../public/images/matic.png'
-import { useContractRead, useAccount, useContractWrite } from 'wagmi'
+import { useContractRead, useAccount, useContractWrite, useContractReads } from 'wagmi'
 import askme_abi from '../abis/AskMe.json'
 import { ethers } from 'ethers'
 
 export const PROFILE_QUERY = gql`
-  query Profile($request: ProfileQueryRequest!) {
-   profiles(request: $request) {
-      items {
-        id
-        name
-        bio
-        picture {
-          ... on NftImage {
-            uri
-          }
-          ... on MediaSet {
-            original {
-              url
-            }
-          }
-          
-        }
-        handle
-        coverPicture {
-          ... on NftImage {
-            uri
-          }
-          ... on MediaSet {
-            original {
-              url
-            }
-          }
-        }
-        ownedBy
-        stats {
-          totalFollowers
-          totalFollowing
-          totalPosts
-          totalPublications
-          totalCollects
-        }
-      }
-    }
-  }
+	query Profile($request: SingleProfileQueryRequest!) {
+		profile(request: $request) {
+			id
+			name
+			bio
+			picture {
+				... on NftImage {
+					uri
+				}
+				... on MediaSet {
+					original {
+						url
+					}
+				}
+			}
+			handle
+			coverPicture {
+				... on NftImage {
+					uri
+				}
+				... on MediaSet {
+					original {
+						url
+					}
+				}
+			}
+			ownedBy
+			stats {
+				totalFollowers
+				totalFollowing
+				totalPosts
+				totalPublications
+				totalCollects
+			}
+		}
+	}
 `
+const askmeContract = {
+	addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+	contractInterface: askme_abi,
+}
 
 const ViewProfile: NextPage = () => {
-  const [newAskFee, setNewAskFee] = useState<string>("0")
-  const [questionText, setQuestionText] = useState<string>('')
-  const {
-    query: { username, type }
-  } = useRouter()
-  const { data:account } = useAccount()
-//   const [feedType, setFeedType] = useState<string>(
-//     type && ['post', 'comment', 'mirror', 'nft'].includes(type as string)
-//       ? type?.toString().toUpperCase()
-//       : 'POST'
-//   )
-  const { data, loading, error } = useQuery(PROFILE_QUERY, {
-    variables: { request: { handles: username } },
-    skip: !username,
-    onCompleted(data) {
-      consoleLog(
-        'Query',
-        '#8b5cf6',
-        `Fetched profile details Profile:${data?.profiles?.items[0]?.id}`
-      )
-    }
-  })
-
-  const isActive = useContractRead(
-		{
-			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
-			contractInterface: askme_abi,
+	const [newAskFee, setNewAskFee] = useState<string>('0')
+	const [questionText, setQuestionText] = useState<string>('')
+	const {
+		query: { username, type },
+	} = useRouter()
+	const { address, connector } = useAccount()
+	//   const [feedType, setFeedType] = useState<string>(
+	//     type && ['post', 'comment', 'mirror', 'nft'].includes(type as string)
+	//       ? type?.toString().toUpperCase()
+	//       : 'POST'
+	//   )
+	const { data, loading, error } = useQuery(PROFILE_QUERY, {
+		variables: { request: { handle: username }, who: null },
+		skip: !username,
+		onCompleted(data) {
+			consoleLog('Query', '#8b5cf6', `Fetched profile details Profile:${data?.profile?.id}`)
 		},
-		'isActive',
-		{
-			args: data?.profiles?.items[0].id,
-			onSuccess(isActive) {
-				console.log('Success', isActive)
-			},
-		}
-  )
-
-  const {
-		data: updateprofile,
+	})
+	let intId = parseInt(data?.profile.id.toString().slice(2), 16)
+	console.log("int id", intId)
+	const {
+		data: reads,
 		isError,
 		isLoading,
-		write:updatefee,
-  } = useContractWrite(
+	} = useContractReads({
+		contracts: [
+			{
+				...askmeContract,
+				functionName: 'isActive',
+				args: [intId],
+			},
+			{
+				...askmeContract,
+				functionName: 'askFee',
+				args: [intId],
+			},
+		],
+	})
+
+	// const isActive = useContractRead(
+	// 	{
+	// 		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+	// 		contractInterface: askme_abi,
+	// 	},
+	// 	'isActive',
+	// 	{
+	// 		args: data?.profile.id,
+	// 		onSuccess(isActive) {
+	// 			console.log('Success', isActive)
+	// 		},
+	// 	}
+	// )
+
+	const {
+		data: updateprofile,
+		write: updatefee,
+	} = useContractWrite(
 		{
 			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
 			contractInterface: askme_abi,
-		},
-		'updateProfile',
-		{
-			args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), data?.profiles?.items[0].id],
+			functionName: 'updateProfile',
+			args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), intId],
 			onSuccess(updateProfile) {
 				console.log('Success', updateProfile)
-			},
-		}
-  )
-
-  
-
-
-  
-  console.log(account)
-
-  const {
-		data: askfee,
-  } = useContractRead(
-		{
-			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
-			contractInterface: askme_abi,
+			}
 		},
-		'askFee',
-		{
-			args: data?.profiles?.items[0].id,
-			onSuccess(askfee) {
-				console.log('Success', ethers.utils.formatUnits(askfee.toString(), 18))
-			},
-		}
-  )
+	)
 
-  const {
-		data: askdata,
-		isLoading: askLoading,
-		write: askquestion,
-  } = useContractWrite(
-		{
-			addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
-			contractInterface: askme_abi,
-		},
-		'mint',
-		{
-			args: [questionText, data?.profiles?.items[0].id],
-			onSuccess(askquestion) {
-				console.log('Success', askquestion)
-			},
-			overrides: {
-				value: askfee,
-			},
-		}
-  )
+	console.log("reads", reads)
 
-  // useEffect(() => {
+	// const { data: askfee } = useContractRead(
+	// 	{
+	// 		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+	// 		contractInterface: askme_abi,
+	// 		functionName: 'askFee',
+	// 		args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), data?.profile?.id],
+	// 		onSuccess(askfee) {
+	// 			console.log('Success', ethers.utils.formatUnits(askfee.toString(), 18))
+	// 		},
+	// 	}
+	// )
+
+	// const {
+	// 	data: askdata,
+	// 	isLoading: askLoading,
+	// 	write: askquestion,
+	// } = useContractWrite(
+	// 	{
+	// 		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+	// 		contractInterface: askme_abi,
+	// 		functionName: 'mint',
+	// 		args: [questionText, data?.profile?.id],
+	// 		onSuccess(askquestion) {
+	// 			console.log('Success', askquestion)
+	// 		},
+	// 		overrides: {
+	// 			value: askfee,
+	// 		},
+	// 	}
+	// )
+
+	// useEffect(() => {
 	// 	// Update the document title using the browser API
 	// 	loadApeData()
-  // })
+	// })
 
-  // async function loadApeData(){
+	// async function loadApeData(){
 
-  // }
+	// }
 
-//   if (error) return <Custom500 />
-  if (loading || !data) return <></>
-//   if (data?.profiles?.items?.length === 0) return <Custom404 />
+	//   if (error) return <Custom500 />
+	if (loading || !data) return <></>
+	//   if (data?.profiles?.items?.length === 0) return <Custom404 />
 
-  const profile = data?.profiles?.items[0]
-  console.log(profile?.ownedBy)
-  return (
+	const profile = data?.profile
+	console.log(profile?.ownedBy)
+	return (
 		<div className="relative max-w-4xl mx-auto min-h-screen">
 			{profile?.coverPicture ? (
 				<Image src={profile?.coverPicture?.original?.url} height="300px" width="900px"></Image>
@@ -232,7 +235,10 @@ const ViewProfile: NextPage = () => {
 							// onChange={}
 							// value={}
 						/>
-						<button className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300" onClick={() => askquestion()}>
+						<button
+							className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300"
+							onClick={() => askquestion()}
+						>
 							Ask for {ethers.utils.formatUnits(askfee.toString(), 18)}
 							<Image src={matic} height="24px" width="24px"></Image>
 						</button>
@@ -269,7 +275,7 @@ const ViewProfile: NextPage = () => {
         </GridItemEight>
       </GridLayout> */}
 		</div>
-  )
+	)
 }
 
 export default ViewProfile

@@ -1,21 +1,22 @@
 import 'tailwindcss/tailwind.css'
 import { APP_NAME } from '@/lib/consts'
 import '@rainbow-me/rainbowkit/styles.css'
-import { chain, createClient, WagmiConfig, useAccount } from 'wagmi'
-import { Chain, apiProvider, configureChains, getDefaultWallets, RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit'
+import { chain, createClient, WagmiConfig, configureChains, defaultChains, useAccount } from 'wagmi'
+import { Chain, getDefaultWallets, RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit'
 import apollo from '@/lib/apollo'
 import { ApolloProvider } from '@apollo/client'
 import ConnectWallet from '../components/ConnectWallet'
 import Link from 'next/link'
+import { publicProvider } from 'wagmi/providers/public'
 
 
-const { chains, provider } = configureChains(
-		[chain.polygon],
-		[apiProvider.infura(process.env.NEXT_PUBLIC_INFURA_ID), apiProvider.fallback()]
-	)
+const { provider } = configureChains([chain.polygon], [publicProvider()])
+const { chains } = configureChains([chain.polygon], [publicProvider()])
+const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
 
-	const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
-	const wagmiClient = createClient({ autoConnect: true, connectors, provider })
+const wagmiClient = createClient({ provider, connectors })
+
+	// const wagmiClient = createClient({ autoConnect: true, connectors, provider })
 
 const App = ({ Component, pageProps }) => {
 	return (
