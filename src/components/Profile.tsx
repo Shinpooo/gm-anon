@@ -82,15 +82,22 @@ const ViewProfile: NextPage = () => {
 			{
 				...askmeContract,
 				functionName: 'isActive',
-				args: [intId],
+				args: [1429],
 			},
 			{
 				...askmeContract,
 				functionName: 'askFee',
-				args: [intId],
+				args: [1429],
 			},
 		],
 	})
+	console.log(reads)
+	// console.log(reads[0], ethers.utils.parseEther(ethers.utils.formatUnits(reads[1])))
+	// if (isLoading || !reads) {
+	// const active = reads[0]
+	// const askfees = ethers.utils.formatUnits(reads[1])
+	// console.log(askfees, "askfees")
+	// }
 
 	// const isActive = useContractRead(
 	// 	{
@@ -135,24 +142,22 @@ const ViewProfile: NextPage = () => {
 	// 	}
 	// )
 
-	// const {
-	// 	data: askdata,
-	// 	isLoading: askLoading,
-	// 	write: askquestion,
-	// } = useContractWrite(
-	// 	{
-	// 		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
-	// 		contractInterface: askme_abi,
-	// 		functionName: 'mint',
-	// 		args: [questionText, data?.profile?.id],
-	// 		onSuccess(askquestion) {
-	// 			console.log('Success', askquestion)
-	// 		},
-	// 		overrides: {
-	// 			value: askfee,
-	// 		},
-	// 	}
-	// )
+	const {
+		data: askdata,
+		isLoading: askLoading,
+		write: askquestion,
+	} = useContractWrite({
+		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+		contractInterface: askme_abi,
+		functionName: 'mint',
+		args: [questionText, 1429],
+		onSuccess(askquestion) {
+			console.log('Success', askquestion)
+		},
+		overrides: {
+			 value: ethers.utils.parseEther(ethers.utils.formatUnits(reads[1])),
+		},
+	})
 
 	// useEffect(() => {
 	// 	// Update the document title using the browser API
@@ -182,9 +187,7 @@ const ViewProfile: NextPage = () => {
 				</div>
 			</div>
 			<div className="bg-gray-200 w-full mx-auto flex justify-center pt-32 pb-4 flex-col text-center rounded-md">
-				<p className="relative bottom-0 inset-x-0 top-0  flex mx-auto justify-center">
-					supppppppppppppppppppppppppp
-				</p>
+				<p className="relative bottom-0 inset-x-0 top-0  flex mx-auto justify-center"></p>
 				<p className="text-4xl font-bold">{profile?.name}</p>
 				<p>@{profile?.handle}</p>
 				<div className="flex justify-center gap-4 mb-10 mt-4">
@@ -201,15 +204,15 @@ const ViewProfile: NextPage = () => {
 						<p>Answers </p>
 					</div>
 					<div className="flex flex-col justify-center">
-						<p className="text-xl">{isActive?.data.toString()}</p>
+						<p className="text-xl">{reads[0].toString()}</p>
 						<p>is Active </p>
 					</div>
-					<div className="flex flex-col justify-center">
-						<p className="text-xl">{ethers.utils.formatUnits(askfee.toString(), 18)}</p>
-						<p>is Active </p>
-					</div>
+					{/* <div className="flex flex-col justify-center">
+						<p className="text-xl">{ethers.utils.formatUnits(reads[1].toString(), 18)}</p>
+						<p>Fees </p>
+					</div> */}
 				</div>
-				{profile?.ownedBy === account?.address ? (
+				{profile?.ownedBy === address ? (
 					<div className="flex justify-center">
 						<div className="flex flex-col">
 							<p className="text-sm">Ask fee (MATIC):</p>
@@ -232,14 +235,14 @@ const ViewProfile: NextPage = () => {
 						<input
 							placeholder={'Ask me anything'}
 							className="mx-10 enabled:border-yellow-400 p-2 text-base placeholder-black bg-gray-100 placeholder-opacity-50 font-mlp-thin pb-12 rounded-xl mb-2"
-							// onChange={}
+							onChange={e => setQuestionText(e.target.value)}
 							// value={}
 						/>
 						<button
 							className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300"
 							onClick={() => askquestion()}
 						>
-							Ask for {ethers.utils.formatUnits(askfee.toString(), 18)}
+							Ask for {ethers.utils.formatUnits(reads[1])}
 							<Image src={matic} height="24px" width="24px"></Image>
 						</button>
 					</>
