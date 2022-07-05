@@ -55,6 +55,8 @@ const askmeContract = {
 const ViewProfile: NextPage = () => {
 	const [newAskFee, setNewAskFee] = useState<string>('0')
 	const [questionText, setQuestionText] = useState<string>('')
+	const [askFee, setAskFee] = useState<any>(0)
+	const [isActive, setIsActive] = useState<any>(false)
 	const {
 		query: { username, type },
 	} = useRouter()
@@ -73,6 +75,7 @@ const ViewProfile: NextPage = () => {
 	})
 	let intId = parseInt(data?.profile.id.toString().slice(2), 16)
 	console.log("int id", intId)
+
 	const {
 		data: reads,
 		isError,
@@ -90,8 +93,15 @@ const ViewProfile: NextPage = () => {
 				args: [1429],
 			},
 		],
+		onSuccess(reads) {
+			setIsActive(reads[0])
+			setAskFee(ethers.utils.formatUnits(reads[1]))
+			console.log("fee", ethers.utils.formatUnits(reads[1]))
+		},
 	})
-	console.log(reads)
+	
+	// console.log(reads) 
+	// console.log(reads[0], reads[1])
 	// console.log(reads[0], ethers.utils.parseEther(ethers.utils.formatUnits(reads[1])))
 	// if (isLoading || !reads) {
 	// const active = reads[0]
@@ -155,7 +165,7 @@ const ViewProfile: NextPage = () => {
 			console.log('Success', askquestion)
 		},
 		overrides: {
-			 value: ethers.utils.parseEther(ethers.utils.formatUnits(reads[1])),
+			 value: ethers.utils.parseEther(askFee.toString()),
 		},
 	})
 
@@ -204,13 +214,13 @@ const ViewProfile: NextPage = () => {
 						<p>Answers </p>
 					</div>
 					<div className="flex flex-col justify-center">
-						<p className="text-xl">{reads[0].toString()}</p>
+						<p className="text-xl">{isActive.toString()}</p>
 						<p>is Active </p>
 					</div>
-					{/* <div className="flex flex-col justify-center">
-						<p className="text-xl">{ethers.utils.formatUnits(reads[1].toString(), 18)}</p>
+					<div className="flex flex-col justify-center">
+						<p className="text-xl">{askFee}</p>
 						<p>Fees </p>
-					</div> */}
+					</div>
 				</div>
 				{profile?.ownedBy === address ? (
 					<div className="flex justify-center">
@@ -242,7 +252,7 @@ const ViewProfile: NextPage = () => {
 							className="bg-yellow-500 mx-auto px-4 py-2 rounded-lg flex gap-2 font-bold hover:scale-110 transition duration-300"
 							onClick={() => askquestion()}
 						>
-							Ask for {ethers.utils.formatUnits(reads[1])}
+							Ask for {askFee}
 							<Image src={matic} height="24px" width="24px"></Image>
 						</button>
 					</>
