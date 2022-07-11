@@ -48,7 +48,7 @@ export const PROFILE_QUERY = gql`
 	}
 `
 const askmeContract = {
-	addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+	addressOrName: '0x076874Cf62b56BA16f399af6f877C01006201CBB',
 	contractInterface: askme_abi,
 }
 
@@ -57,6 +57,8 @@ const ViewProfile: NextPage = () => {
 	const [questionText, setQuestionText] = useState<string>('')
 	const [askFee, setAskFee] = useState<any>(0)
 	const [isActive, setIsActive] = useState<any>(false)
+	const [profileId, setProfileId] = useState<any>(0)
+	const [questionsId, setQuestionsId] = useState<any>([])
 	const {
 		query: { username, type },
 	} = useRouter()
@@ -71,6 +73,7 @@ const ViewProfile: NextPage = () => {
 		skip: !username,
 		onCompleted(data) {
 			consoleLog('Query', '#8b5cf6', `Fetched profile details Profile:${data?.profile?.id}`)
+			setProfileId(parseInt(data?.profile.id.toString().slice(2), 16))
 		},
 	})
 	let intId = parseInt(data?.profile.id.toString().slice(2), 16)
@@ -85,18 +88,25 @@ const ViewProfile: NextPage = () => {
 			{
 				...askmeContract,
 				functionName: 'isActive',
-				args: [1429],
+				args: [profileId],
 			},
 			{
 				...askmeContract,
 				functionName: 'askFee',
-				args: [1429],
+				args: [profileId],
+			},
+			{
+				...askmeContract,
+				functionName: 'fetchQuestionsId',
+				args: [profileId],
 			},
 		],
 		onSuccess(reads) {
 			setIsActive(reads[0])
 			setAskFee(ethers.utils.formatUnits(reads[1]))
-			console.log("fee", ethers.utils.formatUnits(reads[1]))
+			setQuestionsId(reads[2].map(i => i.toNumber()))
+			
+			// console.log('fee', ethers.utils.formatUnits(reads[1]))
 		},
 	})
 	
@@ -157,15 +167,15 @@ const ViewProfile: NextPage = () => {
 		isLoading: askLoading,
 		write: askquestion,
 	} = useContractWrite({
-		addressOrName: '0x12a5D5062b1Be8949cDD6195e3A916A2d8e76589',
+		addressOrName: '0x076874Cf62b56BA16f399af6f877C01006201CBB',
 		contractInterface: askme_abi,
 		functionName: 'mint',
-		args: [questionText, 1429],
+		args: [questionText, profileId],
 		onSuccess(askquestion) {
 			console.log('Success', askquestion)
 		},
 		overrides: {
-			 value: ethers.utils.parseEther(askFee.toString()),
+			value: ethers.utils.parseEther(askFee.toString()),
 		},
 	})
 
