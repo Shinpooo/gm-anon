@@ -79,6 +79,8 @@ const ViewProfile: NextPage = () => {
 	} = useRouter()
 	const { address, connector } = useAccount()
 	const { data: signer } = useSigner()
+	const provider = useProvider()
+
 
 	//   const [feedType, setFeedType] = useState<string>(
 	//     type && ['post', 'comment', 'mirror', 'nft'].includes(type as string)
@@ -97,49 +99,65 @@ const ViewProfile: NextPage = () => {
 	let intId = parseInt(data?.profile.id.toString().slice(2), 16)
 	// console.log("int id", intId)
 
-	const {
-		data: reads,
-		isError,
-		isLoading,
-	} = useContractReads({
-		contracts: [
-			{
-				...askmeContract,
-				functionName: 'isActive',
-				args: [profileId],
-			},
-			{
-				...askmeContract,
-				functionName: 'askFee',
-				args: [profileId],
-			},
-			{
-				...askmeContract,
-				functionName: 'fetchQuestionsId',
-				args: [profileId],
-			},
-			{
-				...askmeContract,
-				functionName: 'rewards',
-				args: [profileId],
-			},
-			{
-				...askmeContract,
-				functionName: 'amountReplied',
-				args: [profileId],
-			},
-		],
-		onSuccess(reads) {
-			setIsActive(reads[0])
-			setAskFee(ethers.utils.formatUnits(reads[1]))
-			setQuestionsId(reads[2].map(i => i.toNumber()))
-			setRewards(ethers.utils.formatUnits(reads[3]))
-			setAmountReplied(reads[4].toNumber())
-			consoleLog('Query', '#8b5cf6', `Fetched profile Questions Id:${questionsId}`)
+	useEffect(() => {
+		loadProfile()
+	}, [profileId])
+	async function loadProfile(){
+		const askme_contract = new ethers.Contract(askmeContract.addressOrName,askmeContract.contractInterface,provider)
+		const is_active = await askme_contract.isActive(profileId)
+		const ask_fee = await askme_contract.askFee(profileId)
+		const questions_id = await askme_contract.fetchQuestionsId(profileId)
+		const rewards = await askme_contract.rewards(profileId)
+		const amout_replied = await askme_contract.amountReplied(profileId)
+		setIsActive(is_active)
+		setAskFee(ethers.utils.formatUnits(ask_fee))
+		setQuestionsId(questions_id.map(i => i.toNumber()))
+		setRewards(ethers.utils.formatUnits(rewards))
+		setAmountReplied(amout_replied.toNumber())
+	}
+	// const {
+	// 	data: reads,
+	// 	isError,
+	// 	isLoading,
+	// } = useContractReads({
+	// 	contracts: [
+	// 		{
+	// 			...askmeContract,
+	// 			functionName: 'isActive',
+	// 			args: [profileId],
+	// 		},
+	// 		{
+	// 			...askmeContract,
+	// 			functionName: 'askFee',
+	// 			args: [profileId],
+	// 		},
+	// 		{
+	// 			...askmeContract,
+	// 			functionName: 'fetchQuestionsId',
+	// 			args: [profileId],
+	// 		},
+	// 		{
+	// 			...askmeContract,
+	// 			functionName: 'rewards',
+	// 			args: [profileId],
+	// 		},
+	// 		{
+	// 			...askmeContract,
+	// 			functionName: 'amountReplied',
+	// 			args: [profileId],
+	// 		},
+	// 	],
+	// 	onSuccess(reads) {
+	// 		setIsActive(reads[0])
+	// 		setAskFee(ethers.utils.formatUnits(reads[1]))
+	// 		setQuestionsId(reads[2].map(i => i.toNumber()))
+	// 		setRewards(ethers.utils.formatUnits(reads[3]))
+	// 		setAmountReplied(reads[4].toNumber())
+	// 		consoleLog('Query', '#8b5cf6', `Fetched profile Questions Id:${questionsId}`)
 
-			console.log(reads)
-		},
-	})
+	// 		console.log(reads)
+	// 	},
+	// })
 
 		const { data: questiontext, fetchNextPage } = useContractInfiniteReads({
 			cacheKey: 'questioncache',
