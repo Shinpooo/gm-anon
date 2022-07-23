@@ -14,32 +14,41 @@ const { provider } = configureChains([chain.polygon], [publicProvider()])
 const { chains } = configureChains([chain.polygon], [publicProvider()])
 const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
 
-const wagmiClient = createClient({ provider, connectors })
+const wagmiClient = createClient({ autoConnect: true, provider, connectors })
 
 	// const wagmiClient = createClient({ autoConnect: true, connectors, provider })
 
 const App = ({ Component, pageProps }) => {
 	return (
 		<WagmiConfig client={wagmiClient}>
-			<RainbowKitProvider chains={chains} coolMode theme={midnightTheme()}>
+			<RainbowKitProvider
+				chains={chains}
+				coolMode
+				theme={midnightTheme({
+					accentColor: '#FFFF1C',
+					accentColorForeground: 'black',
+					borderRadius: 'small',
+				})}
+			>
 				<ApolloProvider client={apollo}>
-					<div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen">
-						<div className="mx-auto w-full mb-4 py-16 max-w-5xl">
+					{/* <div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen"> */}
+					<div className="bg-black bg-cover min-h-screen">
+						<div className="mx-auto w-full mb-4 py-16 max-w-5xl md:px-14">
 							<div className="flex justify-between pt-8 sm:pt-0">
 								<Link href="/">
-									<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white cursor-pointer">
-										🙋 CuriousMonke
+									<h1 className="text-2xl md:text-4xl text-anon font-bold dark:text-white cursor-pointer">
+										_AnonCards
 									</h1>
 								</Link>
 								<div className="flex gap-8">
-									{
+									{/* {
 										true ? <Link href="/">
 											<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
 												My Profile
 											</p>
 										</Link> : <></>
-									}
-									
+									} */}
+
 									<div className="my-auto">
 										<ConnectWallet />
 									</div>

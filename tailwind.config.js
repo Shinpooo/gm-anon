@@ -2,7 +2,15 @@
 module.exports = {
 	content: ['./src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
-		extend: {},
+		fontFamily: {
+			'mlp': ['mlp'],
+			'mlp-bold': ['mlp-bold']
+		},
+		extend: {
+			colors:{
+				anon:"#FFFF1C"
+			}
+		},
 	},
 	plugins: [],
 }
