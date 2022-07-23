@@ -159,48 +159,48 @@ const ViewProfile: NextPage = () => {
 	// 	},
 	// })
 
-		const { data: questiontext, fetchNextPage } = useContractInfiniteReads({
-			cacheKey: 'questioncache',
-			...paginatedIndexesConfig(
-				index => ({
-					...askmeContract,
-					functionName: 'question',
-					args: [index],
-				}),
-				{ start: 1, perPage: 10, direction: 'increment' }
-			),
-			onSuccess(questiontext) {
-				// console.log('cache', mlootAttributes)
-				console.log('Success!!! ', questiontext)
-				let addquestion = questiontext.pages[0][1]
-				setQuestionsText([...questionsText, addquestion])
-			},
-			onError(error) {
-				console.log('error', error)
-			},
-		})
+	// 	const { data: questiontext, fetchNextPage } = useContractInfiniteReads({
+	// 		cacheKey: 'questioncache',
+	// 		...paginatedIndexesConfig(
+	// 			index => ({
+	// 				...askmeContract,
+	// 				functionName: 'question',
+	// 				args: [index],
+	// 			}),
+	// 			{ start: 1, perPage: 10, direction: 'increment' }
+	// 		),
+	// 		onSuccess(questiontext) {
+	// 			// console.log('cache', mlootAttributes)
+	// 			console.log('Success!!! ', questiontext)
+	// 			let addquestion = questiontext.pages[0][1]
+	// 			setQuestionsText([...questionsText, addquestion])
+	// 		},
+	// 		onError(error) {
+	// 			console.log('error', error)
+	// 		},
+	// 	})
 	
 
-	const { data: answertext, fetchNextPage: nextpg } = useContractInfiniteReads({
-		cacheKey: 'answercache',
-		...paginatedIndexesConfig(
-			index => ({
-				...askmeContract,
-				functionName: 'answer',
-				args: [index],
-			}),
-			{ start: 1, perPage: 10, direction: 'increment' }
-		),
-		onSuccess(answertext) {
-			// console.log('cache', mlootAttributes)
-			console.log('Success!! ', answertext)
-			let addanswer = answertext.pages[0][1]
-			setAnswersText([...answersText, addanswer])
-		},
-		onError(error) {
-			console.log('error', error)
-		},
-	})
+	// const { data: answertext, fetchNextPage: nextpg } = useContractInfiniteReads({
+	// 	cacheKey: 'answercache',
+	// 	...paginatedIndexesConfig(
+	// 		index => ({
+	// 			...askmeContract,
+	// 			functionName: 'answer',
+	// 			args: [index],
+	// 		}),
+	// 		{ start: 1, perPage: 10, direction: 'increment' }
+	// 	),
+	// 	onSuccess(answertext) {
+	// 		// console.log('cache', mlootAttributes)
+	// 		console.log('Success!! ', answertext)
+	// 		let addanswer = answertext.pages[0][1]
+	// 		setAnswersText([...answersText, addanswer])
+	// 	},
+	// 	onError(error) {
+	// 		console.log('error', error)
+	// 	},
+	// })
 	
 	// console.log(reads) 
 	// console.log(reads[0], reads[1])
