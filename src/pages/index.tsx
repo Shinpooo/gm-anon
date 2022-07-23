@@ -59,7 +59,7 @@ const Home: FC = () => {
 						</span>
 						<input
 							className="placeholder:bold placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-orange-500 focus:ring-orange-500 focus:ring-1 text-2xl"
-							placeholder="vitalik.lens"
+							placeholder="0xtestinprod.lens"
 							type="text"
 							name="search"
 							onKeyDown={searchProfile}
