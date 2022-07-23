@@ -357,7 +357,7 @@ const ViewProfile: NextPage = () => {
 						<div className="flex flex-col justify-center">
 							<p className="text-xl">{rewards} MATIC</p>
 							<button className="bg-anon text-black" onClick={claimRewards}>
-								Claim{' '}
+								Claim
 							</button>
 						</div>
 					) : (
@@ -409,8 +409,8 @@ const ViewProfile: NextPage = () => {
 							<Image src={matic} height="24px" width="24px"></Image>
 						</button>
 						<p className="mt-12 font-light">
-							Payment is locked in the smart contract until you get a reply. <br></br>Didn't get a reply?
-							You can redeem your question NFT after 7 days and get back your payment.
+							Payment is locked in the smart contract until you get a reply. <br></br>Didn&apos;t get a
+							reply? You can redeem your question NFT after 7 days and get back your payment.
 						</p>
 					</>
 				) : (
