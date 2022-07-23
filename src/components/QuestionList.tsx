@@ -142,7 +142,7 @@ function QuestionList(props) {
 	return (
 		<div className="relative max-w-4xl mx-auto min-h-screen">
 			{nfts.map((nft, i) => (
-				<div className="bg-anon text-anon font-bold p-4">
+				<div key={i} className="bg-anon text-anon font-bold p-4">
 					<div className="bg-black p-2">
 						<p className="text-xl mb-4">Anon Card #{nft.tokenId}</p>
 						<p className="text-base font-thin mb-4">_Anon &gt; {nft.question}</p>
