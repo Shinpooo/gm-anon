@@ -41,19 +41,25 @@ const App = ({ Component, pageProps }) => {
 									</h1>
 								</Link>
 								<div className="flex gap-8">
-									{/* {
-										true ? <Link href="/">
+									{true ? (
+										<Link href="https://opensea.io/collection/anoncards0" rel='noreferrer' target="_blank">
 											<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
-												My Profile
+												NFTs
 											</p>
-										</Link> : <></>
-									} */}
+										</Link>
+									) : (
+										<></>
+									)}
 
 									<div className="my-auto">
 										<ConnectWallet />
 									</div>
 								</div>
 							</div>
+						</div>
+						<div className="text-anon flex justify-center mb-6">
+							Beta: Anoncards is still super experimental, smart contracts may still change and your
+							questions may also dissappear.
 						</div>
 						<Component {...pageProps} />
 					</div>
