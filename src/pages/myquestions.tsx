@@ -13,7 +13,7 @@ import {
 	useProvider,
 	useSigner,
 } from 'wagmi'
-// import ReactLoading from 'react-loading'
+import ReactLoading from 'react-loading'
 
 import anoncards_abi from '../abis/AnonCards.json'
 import { PROXY_ADDRESS } from '@/lib/consts'
@@ -54,7 +54,8 @@ export default function MyAssets() {
 		const items = await Promise.all(
 			tokenids.map(async i => {
 				const questionText = await askme_contract.question(i)
-				const answserText = await askme_contract.answer(i)
+				const answerText = await askme_contract.answer(i)
+				let asker = await askme_contract.asker(i)
 				let replier_id = await askme_contract.replierProfileId(i)
 				replier_id = replier_id.toNumber()
 				const replier_handle = await askme_contract.getHandle(replier_id)
@@ -62,15 +63,17 @@ export default function MyAssets() {
                 let question_fee = await askme_contract.questionFee(i)
                 question_fee = ethers.utils.formatUnits(question_fee)
 				const isReplied = await askme_contract.isReplied(i)
-				const redeemDuration = await askme_contract.getRedeemDuration(i)
+				let redeemDuration = await askme_contract.getRedeemDuration(i)
+				console.log(redeemDuration)
 				const redeemDurationStr = secondsToDhms(redeemDuration)
 
 				let item = {
 					tokenId: i,
+					asker: asker.substring(0,6),
 					reward: ethers.utils.formatUnits(questionReward),
 					replier: replier_handle,
 					question: questionText,
-					answer: answserText,
+					answer: answerText,
 					isReplied: isReplied,
 					duration: redeemDurationStr,
                     fee: question_fee
@@ -87,31 +90,42 @@ export default function MyAssets() {
 		// console.log("test")
 	}
 
-	function secondsToDhms(seconds) {
-		seconds = Number(seconds)
-		let d = Math.floor(seconds / (3600 * 24))
-		let h = Math.floor((seconds % (3600 * 24)) / 3600)
-		let m = Math.floor((seconds % 3600) / 60)
-		let s = Math.floor(seconds % 60)
+	async function redeem(nft) {
+		const askme_contract = new ethers.Contract(askmeContract.addressOrName, askmeContract.contractInterface, signer)
+		let transaction = await askme_contract.redeem(nft.tokenId)
+		await transaction.wait()
+	}
 
-		let dDisplay = d > 0 ? d + (d == 1 ? ' D ' : ' D ') : ''
-		let hDisplay = h > 0 ? h + (h == 1 ? ' H ' : ' H ') : ''
-		let mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
-		// let sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : ''
-		return dDisplay + hDisplay + mDisplay //+ sDisplay
+	function secondsToDhms(seconds) {
+		if (seconds == 0) {
+			return "0 D 0H 0m"
+		} else {
+			seconds = Number(seconds)
+			let d = Math.floor(seconds / (3600 * 24))
+			let h = Math.floor((seconds % (3600 * 24)) / 3600)
+			let m = Math.floor((seconds % 3600) / 60)
+			let s = Math.floor(seconds % 60)
+
+			let dDisplay = d > 0 ? d + (d == 1 ? ' D ' : ' D ') : ''
+			let hDisplay = h > 0 ? h + (h == 1 ? ' H ' : ' H ') : ''
+			let mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
+			// let sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : ''
+			return dDisplay + hDisplay + mDisplay //+ sDisplay
+		}
 	}
 
 	if (!loadingState && !nfts.length)
-		return <h1 className="px-20 py-10 text-3xl text-center text-white font-mlp">No questions !</h1>
+		return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">No questions !</h1>
 	if (loadingState && !nfts.length)
 		return (
 			<div className="flex flex-col items-center justify-center mt-20">
-				<h1 className="px-20 py-2 text-3xl text-white font-mlp">Loading your questions...</h1>
-				{/* <ReactLoading type="cylon" height={'8%'} width={'8%'} /> */}
+				<h1 className="px-20 py-2 text-3xl text-anon font-bold">Loading your questions...</h1>
+				<ReactLoading type="spin" height={'8%'} width={'8%'} />
 			</div>
 		)
+	if ( !address ) return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">Connect your wallet first !</h1>
 	return (
-		<div className="flex flex-col items-center justify-center max-w-6xl mx-auto">
+		<div className="flex flex-col items-center justify-center max-w-6xl mx-auto pb-8 md:pb-24">
 			{/* <div className="grid grid-cols-1 gap-10 pt-4 sm:grid-cols-2 lg:grid-cols-5"> */}
 			<div className="grid grid-cols-1 gap-2 pt-4 md:grid-cols-2">
 				{nfts.map((nft, i) => (
@@ -138,19 +152,23 @@ export default function MyAssets() {
 							<use xlinkHref="#path1" x="0" y="35" stroke="transparent" strokeWidth="1" />
 							<use xlinkHref="#path2" x="0" y="35" stroke="transparent" strokeWidth="1" />
 							<text transform="translate(0,35)" fill="yellow" fontSize="12" fontFamily="monospace">
-								<textPath xlinkHref="#path1">Anon: {nft.question}</textPath>
+								<textPath xlinkHref="#path1">{nft.asker}: {nft.question}</textPath>
 								<textPath xlinkHref="#path2">
-									{nft.replier} : {nft.reply}
+									{nft.replier} : {nft.answer}
 								</textPath>
 							</text>
 						</svg>
-						<div className="p-4 bg-black">
-							<p className="mb-2 text-sm text-white font-mlp">{nft.id}</p>
+						{!nft.isReplied ? <div className="p-4 bg-black">
+							{/* <p className="mb-2 text-sm text-white font-mlp">{nft.id}</p> */}
 
-							<button className="w-full py-2 mt-2 text-white bg-yellow hover:bg-black hover:text-yellow border hover:border-yellow font-mlp">
+							<button
+								className="w-full py-2 mt-2 bg-black text-anon hover:bg-anon hover:text-black border border-anon hover:border-yellow font-mlp-bold"
+								onClick={() => redeem(nft)}
+							>
 								Redeem in {nft.duration} and get back {nft.fee} Matic
 							</button>
-						</div>
+						</div> : <></>}
+						
 					</div>
 					//</a>
 					// </Link>

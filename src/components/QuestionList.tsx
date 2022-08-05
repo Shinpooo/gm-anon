@@ -77,13 +77,15 @@ function QuestionList(props) {
 				console.log('index', i)
 				const questionText = await askme_contract.question(i)
 				const answserText = await askme_contract.answer(i)
+				const asker = await askme_contract.asker(i)
 				const questionReward = await askme_contract.questionFee(i)
 				const isReplied = await askme_contract.isReplied(i)
-				const redeemDuration = await askme_contract.getRedeemDuration(i)
+				let redeemDuration = await askme_contract.getRedeemDuration(i)
+				console.log(redeemDuration)
 				const redeemDurationStr = secondsToDhms(redeemDuration)
-				console.log(questionText)
 				let item = {
 					tokenId: i,
+					asker: asker.substring(0, 6),
 					reward: ethers.utils.formatUnits(questionReward),
 					question: questionText,
 					answer: answserText,
@@ -98,17 +100,21 @@ function QuestionList(props) {
 	}
 
 	function secondsToDhms(seconds) {
-		seconds = Number(seconds)
-		let d = Math.floor(seconds / (3600 * 24))
-		let h = Math.floor((seconds % (3600 * 24)) / 3600)
-		let m = Math.floor((seconds % 3600) / 60)
-		let s = Math.floor(seconds % 60)
+		if (seconds == 0) {
+			return 'Redeemable'
+		} else {
+			seconds = Number(seconds)
+			let d = Math.floor(seconds / (3600 * 24))
+			let h = Math.floor((seconds % (3600 * 24)) / 3600)
+			let m = Math.floor((seconds % 3600) / 60)
+			let s = Math.floor(seconds % 60)
 
-		let dDisplay = d > 0 ? d + (d == 1 ? ' D ' : ' D ') : ''
-		let hDisplay = h > 0 ? h + (h == 1 ? ' H ' : ' H ') : ''
-		let mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
-		// let sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : ''
-		return dDisplay + hDisplay + mDisplay //+ sDisplay
+			let dDisplay = d > 0 ? d + (d == 1 ? ' D ' : ' D ') : ''
+			let hDisplay = h > 0 ? h + (h == 1 ? ' H ' : ' H ') : ''
+			let mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
+			// let sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : ''
+			return dDisplay + hDisplay + mDisplay //+ sDisplay
+		}
 	}
 	// const { data: answertext, fetchNextPage: nextpg } = useContractInfiniteReads({
 	// 	cacheKey: 'answercache',
@@ -161,7 +167,7 @@ function QuestionList(props) {
 				<div key={i} className="bg-anon text-anon font-bold p-4">
 					<div className="bg-black p-2">
 						<div className="flex justify-between">
-							<p className="text-xl mb-4">Anon Card #{nft.tokenId}</p>
+							<p className="text-xl mb-4">Curious Card #{nft.tokenId}</p>
 							{!nft.isReplied ? (
 								<p className="text-base font-thin">
 									<p className="text-xl mb-4">{nft.duration}</p>
@@ -170,7 +176,7 @@ function QuestionList(props) {
 								<></>
 							)}
 						</div>
-						<p className="text-base font-thin mb-4 break-all">_Anon &gt; {nft.question}</p>
+						<p className="text-base font-thin mb-4 break-all">{nft.asker} &gt; {nft.question}</p>
 						{nft.isReplied ? (
 							<p className="text-base font-thin">
 								_{name} &gt; {nft.answer}

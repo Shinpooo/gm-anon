@@ -34,30 +34,24 @@ const App = ({ Component, pageProps }) => {
 					{/* <div className="bg-gradient-to-r from-yellow-200  to-orange-600 bg-cover min-h-screen"> */}
 					<div className="bg-black bg-cover min-h-screen">
 						<div className="mx-auto w-full mb-4 py-16 max-w-5xl md:px-14">
-							<div className="flex justify-between pt-8 sm:pt-0">
+							<div className="flex justify-between pt-8 sm:pt-0 items-center">
 								<Link href="/">
 									<h1 className="text-2xl md:text-4xl text-anon font-bold dark:text-white cursor-pointer">
-										_CuriousCards
+										CuriousCards
 									</h1>
 								</Link>
-								<div className="flex gap-8">
-									{true ? (
-										<Link
-											href="https://opensea.io/collection/anoncards0"
-											rel="noreferrer"
-											target="_blank"
-										>
-											<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
-												NFTs
-											</p>
-										</Link>
-									) : (
-										<></>
-									)}
-
+								<div className="flex gap-8 text-center align-middle justify-center items-center">
 									<Link
-										href="/myquestions"
+										href="https://opensea.io/collection/curiouscards0"
+										rel="noreferrer"
+										target="_blank"
 									>
+										<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
+											NFTs
+										</p>
+									</Link>
+
+									<Link href="/myquestions">
 										<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
 											My Questions
 										</p>
@@ -69,9 +63,8 @@ const App = ({ Component, pageProps }) => {
 								</div>
 							</div>
 						</div>
-						<div className="text-anon flex justify-center mb-6">
-							Beta: Anoncards is still super experimental, smart contracts may still change and your
-							questions may also dissappear.
+						<div className="text-anon flex justify-center mb-6 font-thin">
+							Beta: Anoncards is still experimental, exercise caution when interacting with smart contracts.
 						</div>
 						<Component {...pageProps} />
 					</div>
