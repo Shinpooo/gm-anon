@@ -135,9 +135,9 @@ export default function MyAssets() {
 									d="M10,240 H490 M10,270 H490 M10,300 H490 M10,330 H490 M10,360 H490 M10,390 H490"
 								></path>
 							</defs>
-							<use xlinkHref="#path1" x="0" y="35" stroke="transparent" stroke-width="1" />
-							<use xlinkHref="#path2" x="0" y="35" stroke="transparent" stroke-width="1" />
-							<text transform="translate(0,35)" fill="yellow" font-size="12" font-family="monospace">
+							<use xlinkHref="#path1" x="0" y="35" stroke="transparent" strokeWidth="1" />
+							<use xlinkHref="#path2" x="0" y="35" stroke="transparent" strokeWidth="1" />
+							<text transform="translate(0,35)" fill="yellow" fontSize="12" fontFamily="monospace">
 								<textPath xlinkHref="#path1">Anon: {nft.question}</textPath>
 								<textPath xlinkHref="#path2">
 									{nft.replier} : {nft.reply}
