@@ -6,6 +6,7 @@ import consoleLog from '../lib/consoleLog'
 import Image from 'next/image'
 import matic from '../../public/images/matic.svg'
 import QuestionList from './QuestionList'
+import { PROXY_ADDRESS } from '@/lib/consts'
 
 import {
 	useContractRead,
@@ -15,7 +16,7 @@ import {
 	useContractInfiniteReads,
 	paginatedIndexesConfig,
 	useSigner,
-	useProvider
+	useProvider,
 } from 'wagmi'
 import anoncards_abi from '../abis/AnonCards.json'
 import { ethers } from 'ethers'
@@ -59,7 +60,7 @@ export const PROFILE_QUERY = gql`
 	}
 `
 const askmeContract = {
-	addressOrName: '0x5C27F10a285d7DDD06056e06AF5053e1A0cc8aC4',
+	addressOrName: PROXY_ADDRESS,
 	contractInterface: anoncards_abi,
 }
 
@@ -81,7 +82,6 @@ const ViewProfile: NextPage = () => {
 	const { data: signer } = useSigner()
 	const provider = useProvider()
 
-
 	//   const [feedType, setFeedType] = useState<string>(
 	//     type && ['post', 'comment', 'mirror', 'nft'].includes(type as string)
 	//       ? type?.toString().toUpperCase()
@@ -93,7 +93,6 @@ const ViewProfile: NextPage = () => {
 		onCompleted(data) {
 			consoleLog('Query', '#8b5cf6', `Fetched profile details Profile:${data?.profile?.id}`)
 			setProfileId(parseInt(data?.profile.id.toString().slice(2), 16))
-			
 		},
 	})
 	let intId = parseInt(data?.profile.id.toString().slice(2), 16)
@@ -102,8 +101,12 @@ const ViewProfile: NextPage = () => {
 	useEffect(() => {
 		loadProfile()
 	}, [profileId])
-	async function loadProfile(){
-		const askme_contract = new ethers.Contract(askmeContract.addressOrName,askmeContract.contractInterface,provider)
+	async function loadProfile() {
+		const askme_contract = new ethers.Contract(
+			askmeContract.addressOrName,
+			askmeContract.contractInterface,
+			provider
+		)
 		const is_active = await askme_contract.isActive(profileId)
 		const ask_fee = await askme_contract.askFee(profileId)
 		const questions_id = await askme_contract.fetchQuestionsId(profileId)
@@ -179,7 +182,6 @@ const ViewProfile: NextPage = () => {
 	// 			console.log('error', error)
 	// 		},
 	// 	})
-	
 
 	// const { data: answertext, fetchNextPage: nextpg } = useContractInfiniteReads({
 	// 	cacheKey: 'answercache',
@@ -201,8 +203,8 @@ const ViewProfile: NextPage = () => {
 	// 		console.log('error', error)
 	// 	},
 	// })
-	
-	// console.log(reads) 
+
+	// console.log(reads)
 	// console.log(reads[0], reads[1])
 	// console.log(reads[0], ethers.utils.parseEther(ethers.utils.formatUnits(reads[1])))
 	// if (isLoading || !reads) {
@@ -224,16 +226,21 @@ const ViewProfile: NextPage = () => {
 	// 		},
 	// 	}
 	// )
+	async function updateProfile() {
+		const askme_contract = new ethers.Contract(askmeContract.addressOrName, askmeContract.contractInterface, signer)
+		let transaction = await askme_contract.updateProfile('true', ethers.utils.parseUnits(newAskFee, 'ether'), intId)
+		await transaction.wait()
+	}
 
-	const { data: updateprofile, write: updatefee } = useContractWrite({
-		addressOrName: '0x5C27F10a285d7DDD06056e06AF5053e1A0cc8aC4',
-		contractInterface: anoncards_abi,
-		functionName: 'updateProfile',
-		args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), intId],
-		onSuccess(updateProfile) {
-			// console.log('Success', updateProfile)
-		},
-	})
+	// const { data: updateprofile, write: updatefee } = useContractWrite({
+	// 	addressOrName: PROXY_ADDRESS,
+	// 	contractInterface: anoncards_abi,
+	// 	functionName: 'updateProfile',
+	// 	args: ['true', ethers.utils.parseUnits(newAskFee, 'ether'), intId],
+	// 	onSuccess(updateProfile) {
+	// 		// console.log('Success', updateProfile)
+	// 	},
+	// })
 
 	// console.log("reads", reads)
 
@@ -249,22 +256,27 @@ const ViewProfile: NextPage = () => {
 	// 	}
 	// )
 
-	const {
-		data: askdata,
-		isLoading: askLoading,
-		write: askquestion,
-	} = useContractWrite({
-		addressOrName: '0x5C27F10a285d7DDD06056e06AF5053e1A0cc8aC4',
-		contractInterface: anoncards_abi,
-		functionName: 'mint',
-		args: [questionText, profileId],
-		onSuccess(askquestion) {
-			// console.log('Success', askquestion)
-		},
-		overrides: {
-			value: ethers.utils.parseEther(askFee.toString()),
-		},
-	})
+	async function mint() {
+		const askme_contract = new ethers.Contract(askmeContract.addressOrName, askmeContract.contractInterface, signer)
+		let transaction = await askme_contract.mint(questionText, profileId, {value: ethers.utils.parseEther(askFee.toString())})
+		await transaction.wait()
+	}
+	// const {
+	// 	data: askdata,
+	// 	isLoading: askLoading,
+	// 	write: askquestion,
+	// } = useContractWrite({
+	// 	addressOrName: PROXY_ADDRESS,
+	// 	contractInterface: anoncards_abi,
+	// 	functionName: 'mint',
+	// 	args: [questionText, profileId],
+	// 	onSuccess(askquestion) {
+	// 		// console.log('Success', askquestion)
+	// 	},
+	// 	overrides: {
+	// 		value: ethers.utils.parseEther(askFee.toString()),
+	// 	},
+	// })
 
 	// useEffect(() => {
 	// 	// Update the document title using the browser API
@@ -385,7 +397,7 @@ const ViewProfile: NextPage = () => {
 							/>
 							<button
 								className="bg-anon text-black mx-auto px-4 py-2 items-center rounded-0 flex gap-2 font-bold hover:scale-110 transition duration-300"
-								onClick={() => updatefee()}
+								onClick={() => updateProfile()}
 							>
 								{isActive ? <>Update Fee</> : <>Activate profile</>}
 							</button>
@@ -403,7 +415,7 @@ const ViewProfile: NextPage = () => {
 						<div className="flex justify-end mx-10">{questionText.length}/400</div>
 						<button
 							className="bg-black mx-auto px-4 py-2 rounded-0 flex gap-2 font-bold hover:scale-110 transition duration-300 border-anon border-2"
-							onClick={() => askquestion()}
+							onClick={() => mint()}
 						>
 							Ask for {askFee}
 							<Image src={matic} height="24px" width="24px"></Image>

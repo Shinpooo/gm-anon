@@ -17,9 +17,10 @@ import {
 } from 'wagmi'
 import anoncards_abi from '../abis/AnonCards.json'
 import { ethers } from 'ethers'
+import { PROXY_ADDRESS } from '@/lib/consts'
 
 const askmeContract = {
-	addressOrName: '0x5C27F10a285d7DDD06056e06AF5053e1A0cc8aC4',
+	addressOrName: PROXY_ADDRESS,
 	contractInterface: anoncards_abi,
 }
 
@@ -78,7 +79,8 @@ function QuestionList(props) {
 				const answserText = await askme_contract.answer(i)
 				const questionReward = await askme_contract.questionFee(i)
 				const isReplied = await askme_contract.isReplied(i)
-
+				const redeemDuration = await askme_contract.getRedeemDuration(i)
+				const redeemDurationStr = secondsToDhms(redeemDuration)
 				console.log(questionText)
 				let item = {
 					tokenId: i,
@@ -86,6 +88,7 @@ function QuestionList(props) {
 					question: questionText,
 					answer: answserText,
 					isReplied: isReplied,
+					duration: redeemDurationStr
 				}
 				return item
 			})
@@ -94,6 +97,19 @@ function QuestionList(props) {
 		console.log('NFT:', nfts)
 	}
 
+	function secondsToDhms(seconds) {
+		seconds = Number(seconds)
+		let d = Math.floor(seconds / (3600 * 24))
+		let h = Math.floor((seconds % (3600 * 24)) / 3600)
+		let m = Math.floor((seconds % 3600) / 60)
+		let s = Math.floor(seconds % 60)
+
+		let dDisplay = d > 0 ? d + (d == 1 ? ' D ' : ' D ') : ''
+		let hDisplay = h > 0 ? h + (h == 1 ? ' H ' : ' H ') : ''
+		let mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
+		// let sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : ''
+		return dDisplay + hDisplay + mDisplay //+ sDisplay
+	}
 	// const { data: answertext, fetchNextPage: nextpg } = useContractInfiniteReads({
 	// 	cacheKey: 'answercache',
 	// 	...paginatedIndexesConfig(
@@ -144,8 +160,17 @@ function QuestionList(props) {
 			{nfts.map((nft, i) => (
 				<div key={i} className="bg-anon text-anon font-bold p-4">
 					<div className="bg-black p-2">
-						<p className="text-xl mb-4">Anon Card #{nft.tokenId}</p>
-						<p className="text-base font-thin mb-4">_Anon &gt; {nft.question}</p>
+						<div className="flex justify-between">
+							<p className="text-xl mb-4">Anon Card #{nft.tokenId}</p>
+							{!nft.isReplied ? (
+								<p className="text-base font-thin">
+									<p className="text-xl mb-4">{nft.duration}</p>
+								</p>
+							) : (
+								<></>
+							)}
+						</div>
+						<p className="text-base font-thin mb-4 break-all">_Anon &gt; {nft.question}</p>
 						{nft.isReplied ? (
 							<p className="text-base font-thin">
 								_{name} &gt; {nft.answer}

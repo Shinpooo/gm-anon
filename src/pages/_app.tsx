@@ -37,12 +37,16 @@ const App = ({ Component, pageProps }) => {
 							<div className="flex justify-between pt-8 sm:pt-0">
 								<Link href="/">
 									<h1 className="text-2xl md:text-4xl text-anon font-bold dark:text-white cursor-pointer">
-										_AnonCards
+										_CuriousCards
 									</h1>
 								</Link>
 								<div className="flex gap-8">
 									{true ? (
-										<Link href="https://opensea.io/collection/anoncards0" rel='noreferrer' target="_blank">
+										<Link
+											href="https://opensea.io/collection/anoncards0"
+											rel="noreferrer"
+											target="_blank"
+										>
 											<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
 												NFTs
 											</p>
@@ -50,6 +54,14 @@ const App = ({ Component, pageProps }) => {
 									) : (
 										<></>
 									)}
+
+									<Link
+										href="/myquestions"
+									>
+										<p className="text-2xl md:text-lg text-white font-bold dark:text-white cursor-pointer">
+											My Questions
+										</p>
+									</Link>
 
 									<div className="my-auto">
 										<ConnectWallet />
