@@ -297,13 +297,14 @@ const ViewProfile: NextPage = () => {
 	//   if (data?.profiles?.items?.length === 0) return <Custom404 />
 
 	const profile = data?.profile
+	console.log(profile)
 	// console.log(profile?.ownedBy)
 	return (
-		<div className="relative max-w-4xl mx-auto min-h-screen text-anon">
+		<div className="relative max-w-4xl mx-auto min-h-screen text-anon w-full">
 			{profile?.coverPicture ? (
 				<Image src={profile?.coverPicture?.original?.url} height="300px" width="900px"></Image>
 			) : (
-				<div className="bg-anon h-72 w-full"></div>
+				<div className="bg-anon h-32 md:h-72 w-full"></div>
 			)}
 			<div className="absolute bottom-100 inset-x-0 md:top-48 top-10 flex mx-auto justify-center">
 				<div className="rounded-full overflow-hidden border-anon border-4">
