@@ -399,7 +399,7 @@ const ViewProfile: NextPage = () => {
 								className="bg-anon text-black mx-auto px-4 py-2 items-center rounded-0 flex gap-2 font-bold hover:scale-110 transition duration-300"
 								onClick={() => updateProfile()}
 							>
-								{isActive ? <>Update Fee</> : <>Activate profile</>}
+								{isActive ? <>Update Fee</> : <>Set up your profile</>}
 							</button>
 						</div>
 					</div>
