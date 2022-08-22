@@ -426,7 +426,7 @@ const ViewProfile: NextPage = () => {
 						</p>
 					</>
 				) : (
-					<>This account is inactive.</>
+					<>{profile?.name} has not activated his profile yet.</>
 				)}
 			</div>
 
