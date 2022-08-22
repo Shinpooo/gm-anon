@@ -123,7 +123,7 @@ export default function MyAssets() {
 				<ReactLoading type="spin" height={'8%'} width={'8%'} />
 			</div>
 		)
-	if ( !address ) return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">Connect your wallet first !</h1>
+	if ( !signer ) return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">Connect your wallet first !</h1>
 	return (
 		<div className="flex flex-col items-center justify-center max-w-6xl mx-auto pb-8 md:pb-24">
 			{/* <div className="grid grid-cols-1 gap-10 pt-4 sm:grid-cols-2 lg:grid-cols-5"> */}
