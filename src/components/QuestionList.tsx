@@ -18,6 +18,7 @@ import {
 import anoncards_abi from '../abis/AnonCards.json'
 import { ethers } from 'ethers'
 import { PROXY_ADDRESS } from '@/lib/consts'
+import ReactLoading from 'react-loading'
 
 const askmeContract = {
 	addressOrName: PROXY_ADDRESS,
@@ -39,6 +40,45 @@ function QuestionList(props) {
 	const [questionsText, setQuestionsText] = useState<any>([])
 	const [answersText, setAnswersText] = useState<any>([])
 	const [nfts, setNfts] = useState<any>([])
+	const [displayedNfts, setDisplayedNfts] = useState<any>([])
+	const [isFetching, setIsFetching] = useState<boolean>(false)
+	const [loadingState, setLoadingState] = useState<boolean>(true)
+
+
+	useEffect(() => {
+		window.addEventListener('scroll', handleScroll)
+		loadText()
+	}, [])
+
+	const handleScroll = () => {
+		if (
+			Math.ceil(window.innerHeight + document.documentElement.scrollTop) <
+				document.documentElement.offsetHeight - 500 ||
+			isFetching
+		)
+			return
+		setIsFetching(true)
+	}
+
+	const fetchData = async () => {
+		setTimeout(async () => {
+			const copy = [...displayedNfts]
+			let length = copy.length
+			const slicedArray = nfts.slice(0, length + 10)
+			setDisplayedNfts(slicedArray)
+		}, 1000)
+	}
+
+	useEffect(() => {
+		if (!isFetching) return
+		fetchMoreListItems()
+	}, [isFetching])
+
+	const fetchMoreListItems = () => {
+		fetchData()
+		setIsFetching(false)
+	}
+
 
 	// const { data: questiontext, fetchNextPage } = useContractInfiniteReads({
 	// 	cacheKey: 'questioncache',
@@ -95,7 +135,10 @@ function QuestionList(props) {
 				return item
 			})
 		)
-		setNfts(items.reverse())
+		let items_reversed = items.reverse()
+		setNfts(items_reversed)
+		setDisplayedNfts(items_reversed.slice(0, 10))
+		setLoadingState(false)
 		console.log('NFT:', nfts)
 	}
 
@@ -161,9 +204,17 @@ function QuestionList(props) {
 		await transaction.wait()
 	}
 
+	    if (loadingState && !nfts.length)
+			return (
+				<div className="flex flex-col items-center justify-center mt-20">
+					<h1 className="px-20 py-2 text-3xl text-anon font-bold">Loading your questions...</h1>
+					<ReactLoading type="spin" height={'8%'} width={'8%'} />
+				</div>
+			)
+
 	return (
 		<div className="relative max-w-4xl mx-auto min-h-screen">
-			{nfts.map((nft, i) => (
+			{displayedNfts.map((nft, i) => (
 				<div key={i} className="bg-anon text-anon font-bold p-4">
 					<div className="bg-black p-2">
 						<div className="flex justify-between">

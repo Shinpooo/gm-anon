@@ -26,7 +26,7 @@ const Home: FC = () => {
    }
 	return (
 		<>
-			<div className="relative flex flex-col justify-around min-h-screen py-4 dark items-top dark:bg-gray-900 sm:items-center sm:pt-0 max-w-4xl mx-auto px-6">
+			<div className="relative flex flex-col justify-around dark items-top dark:bg-gray-900 sm:items-center sm:pt-0 max-w-4xl mx-auto px-6">
 				{/* <div className="mx-auto w-full mb-10 py-16">
 					<div className="flex justify-between pt-8 sm:pt-0">
 						<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white">AmAnon</h1>

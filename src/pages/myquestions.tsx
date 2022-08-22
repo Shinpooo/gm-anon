@@ -68,7 +68,7 @@ export default function MyAssets() {
 				const redeemDurationStr = secondsToDhms(redeemDuration)
 
 				let item = {
-					tokenId: i,
+					tokenId: i.toNumber(),
 					asker: asker.substring(0,6),
 					reward: ethers.utils.formatUnits(questionReward),
 					replier: replier_handle,
@@ -115,7 +115,7 @@ export default function MyAssets() {
 	}
 
 	if (!loadingState && !nfts.length)
-		return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">No questions !</h1>
+		return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">No questions asked.</h1>
 	if (loadingState && !nfts.length)
 		return (
 			<div className="flex flex-col items-center justify-center mt-20">
@@ -131,49 +131,73 @@ export default function MyAssets() {
 				{nfts.map((nft, i) => (
 					// <Link key={i} href={`/details/${nft.tokenId}`}>
 					//<a >
-					<div key={i} className="border border-anon md:col-span-2">
-						<svg
-							width="500"
-							height="500"
-							xmlns="http://www.w3.org/2000/svg"
-							xmlnsXlink="http://www.w3.org/1999/xlink"
-						>
-							<rect width="100%" height="100%" fill="black" />
-							<defs>
-								<path
-									id="path1"
-									d="M10,30 H490 M10,60 H490 M10,90 H490 M10,120 H490 M10,150 H490 M10,180 H490"
-								></path>
-								<path
-									id="path2"
-									d="M10,240 H490 M10,270 H490 M10,300 H490 M10,330 H490 M10,360 H490 M10,390 H490"
-								></path>
-							</defs>
-							<use xlinkHref="#path1" x="0" y="35" stroke="transparent" strokeWidth="1" />
-							<use xlinkHref="#path2" x="0" y="35" stroke="transparent" strokeWidth="1" />
-							<text transform="translate(0,35)" fill="yellow" fontSize="12" fontFamily="monospace">
-								<textPath xlinkHref="#path1">{nft.asker}: {nft.question}</textPath>
-								<textPath xlinkHref="#path2">
-									{nft.replier} : {nft.answer}
-								</textPath>
-							</text>
-						</svg>
-						{!nft.isReplied ? <div className="p-4 bg-black">
-							{/* <p className="mb-2 text-sm text-white font-mlp">{nft.id}</p> */}
-
-							<button
-								className="w-full py-2 mt-2 bg-black text-anon hover:bg-anon hover:text-black border border-anon hover:border-yellow font-mlp-bold"
-								onClick={() => redeem(nft)}
+					<div key={i} className="border border-anon md:col-span-2 text-anon">
+							{/* <svg
+								// width="500"
+								// height="500"
+								xmlns="http://www.w3.org/2000/svg"
+								xmlnsXlink="http://www.w3.org/1999/xlink"
+								preserveAspectRatio="xMinYMin meet"
 							>
-								Redeem in {nft.duration} and get back {nft.fee} Matic
-							</button>
-						</div> : <></>}
-						
-					</div>
-					//</a>
-					// </Link>
-				))}
+								<rect width="100%" height="100%" fill="black" />
+								<defs>
+									<path
+										id="path1"
+										d="M10,30 H490 M10,60 H490 M10,90 H490 M10,120 H490 M10,150 H490 M10,180 H490"
+									></path>
+									<path
+										id="path2"
+										d="M10,240 H490 M10,270 H490 M10,300 H490 M10,330 H490 M10,360 H490 M10,390 H490"
+									></path>
+								</defs>
+								<use xlinkHref="#path1" x="0" y="35" stroke="transparent" strokeWidth="1" />
+								<use xlinkHref="#path2" x="0" y="35" stroke="transparent" strokeWidth="1" />
+								<text transform="translate(0,35)" fill="yellow" fontSize="12" fontFamily="monospace">
+									<textPath xlinkHref="#path1">
+										{nft.asker}: {nft.question}
+									</textPath>
+									<textPath xlinkHref="#path2">
+										{nft.replier} : {nft.answer}
+									</textPath>
+								</text>
+							</svg> */}
+						<div className="bg-black p-2">
+							<div className="flex justify-between">
+								<p className="text-xl mb-4">Curious Card #{nft.tokenId}</p>
+								{!nft.isReplied ? (
+									<p className="text-base font-thin">
+										<p className="text-xl mb-4">{nft.duration}</p>
+									</p>
+								) : (
+									<></>
+								)}
+							</div>
+							<p className="text-base font-thin mb-4 break-all">{nft.asker} &gt; {nft.question}</p>
+							{nft.isReplied ? (
+								<p className="text-base font-thin">
+									_{nft.replier} &gt; {nft.answer}
+								</p>):(
+								<div className="font-thin">_{nft.replier} &gt; Not replied yet</div>
+							)}
+							{!nft.isReplied ? (
+								<div className="p-4 bg-black">
+									{/* <p className="mb-2 text-sm text-white font-mlp">{nft.id}</p> */}
+
+									<button
+										className="w-full py-2 mt-2 bg-black text-anon hover:bg-anon hover:text-black border border-anon hover:border-yellow font-mlp-bold"
+										onClick={() => redeem(nft)}
+									>
+										Redeem in {nft.duration} and get back {nft.fee} Matic
+									</button>
+								</div>
+							) : (
+								<></>
+							)}
+						</div>
+					</div>))
+				}
 			</div>
 		</div>
 	)
+	
 }

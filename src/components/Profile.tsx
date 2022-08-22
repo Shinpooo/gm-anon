@@ -305,7 +305,7 @@ const ViewProfile: NextPage = () => {
 			) : (
 				<div className="bg-anon h-72 w-full"></div>
 			)}
-			<div className="absolute bottom-100 inset-x-0 top-48  flex mx-auto justify-center">
+			<div className="absolute bottom-100 inset-x-0 md:top-48 top-10 flex mx-auto justify-center">
 				<div className="rounded-full overflow-hidden border-anon border-4">
 					{profile?.picture ? (
 						<Image src={profile?.picture?.original?.url} height="200px" width="200px"></Image>
@@ -314,7 +314,7 @@ const ViewProfile: NextPage = () => {
 					)}
 				</div>
 			</div>
-			<div className="bg-black w-full mx-auto flex justify-center pt-32 pb-4 flex-col text-center rounded-md">
+			<div className="bg-black w-full mx-auto flex justify-center pt-32 pb-4 flex-col text-center rounded-md mb-12">
 				<p className="relative bottom-0 inset-x-0 top-0  flex mx-auto justify-center"></p>
 				<div className="flex mx-auto">
 					<p className="text-4xl font-bold">{profile?.name} </p>
