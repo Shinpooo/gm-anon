@@ -227,7 +227,7 @@ function QuestionList(props) {
 								<></>
 							)}
 						</div>
-						<p className="text-base font-thin mb-4 break-all">{nft.asker} &gt; {nft.question}</p>
+						<p className="text-base font-thin mb-4 break-all">_{nft.asker} &gt; {nft.question}</p>
 						{nft.isReplied ? (
 							<p className="text-base font-thin">
 								_{name} &gt; {nft.answer}

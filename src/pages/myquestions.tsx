@@ -37,6 +37,7 @@ export default function MyAssets() {
 	}, [])
 
 	async function loadNFTs() {
+		try {
 		const askme_contract = new ethers.Contract(
 			askmeContract.addressOrName,
 			askmeContract.contractInterface,
@@ -75,6 +76,7 @@ export default function MyAssets() {
 					question: questionText,
 					answer: answerText,
 					isReplied: isReplied,
+					isRedeemable: !isReplied && redeemDuration == 0,
 					duration: redeemDurationStr,
                     fee: question_fee
 				}
@@ -86,6 +88,9 @@ export default function MyAssets() {
 
 		console.log(items)
 		setLoadingState(false)
+		} catch {
+			setLoadingState(false)
+		}
 
 		// console.log("test")
 	}
@@ -113,14 +118,16 @@ export default function MyAssets() {
 			return dDisplay + hDisplay + mDisplay //+ sDisplay
 		}
 	}
-
-	if (!loadingState && !nfts.length)
+	
+	if (!loadingState && !nfts.length && signer)
 		return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">No questions asked.</h1>
+	if (!loadingState && !nfts.length && !signer)
+		return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">Wallet is not connected.</h1>
 	if (loadingState && !nfts.length)
 		return (
-			<div className="flex flex-col items-center justify-center mt-20">
+			<div className="flex flex-col items-center justify-center mt-20 gap-4">
 				<h1 className="px-20 py-2 text-3xl text-anon font-bold">Loading your questions...</h1>
-				<ReactLoading type="spin" height={'8%'} width={'8%'} />
+				<ReactLoading type="spin" height={'8%'} color={"#FFFF1C"} width={'8%'} />
 			</div>
 		)
 	if ( !signer ) return <h1 className="px-20 py-10 text-3xl text-center text-anon font-bold">Connect your wallet first !</h1>
@@ -132,7 +139,7 @@ export default function MyAssets() {
 					// <Link key={i} href={`/details/${nft.tokenId}`}>
 					//<a >
 					<div key={i} className="border border-anon md:col-span-2 text-anon">
-							{/* <svg
+						{/* <svg
 								// width="500"
 								// height="500"
 								xmlns="http://www.w3.org/2000/svg"
@@ -172,30 +179,34 @@ export default function MyAssets() {
 									<></>
 								)}
 							</div>
-							<p className="text-base font-thin mb-4 break-all">{nft.asker} &gt; {nft.question}</p>
+							<p className="text-base font-thin mb-4 break-all">
+								_{nft.asker} &gt; {nft.question}
+							</p>
 							{nft.isReplied ? (
 								<p className="text-base font-thin">
 									_{nft.replier} &gt; {nft.answer}
-								</p>):(
+								</p>
+							) : (
 								<div className="font-thin">_{nft.replier} &gt; Not replied yet</div>
 							)}
-							{!nft.isReplied ? (
+							{nft.isRedeemable ? (
 								<div className="p-4 bg-black">
 									{/* <p className="mb-2 text-sm text-white font-mlp">{nft.id}</p> */}
 
 									<button
-										className="w-full py-2 mt-2 bg-black text-anon hover:bg-anon hover:text-black border border-anon hover:border-yellow font-mlp-bold"
+										className="w-full py-2 mt-2 bg-black text-anon hover:bg-anon hover:text-black border border-anon hover:border-yellow font-bold"
 										onClick={() => redeem(nft)}
 									>
-										Redeem in {nft.duration} and get back {nft.fee} Matic
+										{/* Redeem in {nft.duration} and get back {nft.fee} Matic */}
+										Redeem and get back {nft.fee} Matic
 									</button>
 								</div>
 							) : (
 								<></>
 							)}
 						</div>
-					</div>))
-				}
+					</div>
+				))}
 			</div>
 		</div>
 	)

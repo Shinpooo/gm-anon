@@ -26,21 +26,19 @@ const Home: FC = () => {
    }
 	return (
 		<>
-			<div className="relative flex flex-col justify-around dark items-top dark:bg-gray-900 sm:items-center sm:pt-0 max-w-4xl mx-auto px-6">
+			<div className="relative flex flex-col justify-around dark items-top dark:bg-black sm:items-center sm:pt-0 max-w-4xl mx-auto px-6">
 				{/* <div className="mx-auto w-full mb-10 py-16">
 					<div className="flex justify-between pt-8 sm:pt-0">
 						<h1 className="text-2xl md:text-4xl text-white font-bold dark:text-white">AmAnon</h1>
 						<div className='my-auto'><ConnectWallet /></div>
 					</div>
 				</div> */}
-				<div>
-					<div className="text-white text-4xl font-bold mb-8">
-						Curious about something? 🤔 Just ask someone.
-						{/* <br></br> Try it{' '}
-					<a href="profile/lenster.lens" className="underline" rel="noreferrer" target="_blank">
-						here
-					</a>{' '}
-					👈 */}
+				<div className="w-4xl">
+					<div className="hidden md:block text-white text-4xl font-bold mb-8 w-full">
+						Own your curiosity. Ask anyone, anything. 🙋
+					</div>
+					<div className="md:hidden text-white text-3xl font-bold mb-8 w-full">
+						Own your curiosity. <br></br>Ask anyone, anything. 🙋
 					</div>
 					<label className="relative block w-full">
 						<span className="absolute inset-y-0 left-0 flex items-center pl-2">

@@ -1,7 +1,7 @@
 import 'tailwindcss/tailwind.css'
 import { APP_NAME } from '@/lib/consts'
 import '@rainbow-me/rainbowkit/styles.css'
-import { chain, createClient, WagmiConfig, configureChains, defaultChains, useAccount } from 'wagmi'
+import { chain, createClient, WagmiConfig, configureChains, defaultChains, useAccount, useSigner } from 'wagmi'
 import { Chain, getDefaultWallets, RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit'
 import apollo from '@/lib/apollo'
 import { ApolloProvider } from '@apollo/client'
@@ -10,38 +10,35 @@ import Link from 'next/link'
 import { publicProvider } from 'wagmi/providers/public'
 import { useEffect, useState } from 'react'
 
-
 const { provider } = configureChains([chain.polygon], [publicProvider()])
 const { chains } = configureChains([chain.polygon], [publicProvider()])
 const { connectors } = getDefaultWallets({ appName: APP_NAME, chains })
 
 const wagmiClient = createClient({ autoConnect: true, provider, connectors })
 
-	// const wagmiClient = createClient({ autoConnect: true, connectors, provider })
+// const wagmiClient = createClient({ autoConnect: true, connectors, provider })
 
 const App = ({ Component, pageProps }) => {
-   const [hidden,setHidden] = useState("hidden")
-  
-  function changeHidden(){
+	const [hidden, setHidden] = useState('hidden')
+	function changeHidden() {
 		if (hidden) {
 			setHidden('')
-		} 
-		else {
+		} else {
 			setHidden('hidden')
 		}
-  }
+	}
 
-//   useEffect(() => {
-// 		/**
-// 		 * Alert if clicked on outside of element
-// 		 */
-// 		function handleClickOutside(event) {
-// 			setHidden('hidden')
-// 		}
-// 		// Bind the event listener
-// 		document.addEventListener('mousedown', handleClickOutside)
-		
-//   }, [hidden])
+	//   useEffect(() => {
+	// 		/**
+	// 		 * Alert if clicked on outside of element
+	// 		 */
+	// 		function handleClickOutside(event) {
+	// 			setHidden('hidden')
+	// 		}
+	// 		// Bind the event listener
+	// 		document.addEventListener('mousedown', handleClickOutside)
+
+	//   }, [hidden])
 
 	return (
 		<WagmiConfig client={wagmiClient}>
@@ -65,7 +62,7 @@ const App = ({ Component, pageProps }) => {
 									</h1>
 								</Link>
 								<div className="hidden gap-8 text-center align-middle justify-center items-center mx-12 md:mx-0  md:flex">
-									<Link
+									<a
 										href="https://opensea.io/collection/curiouscards0"
 										rel="noreferrer"
 										target="_blank"
@@ -73,7 +70,7 @@ const App = ({ Component, pageProps }) => {
 										<p className="text-sm md:text-lg text-white font-bold dark:text-white cursor-pointer">
 											Opensea
 										</p>
-									</Link>
+									</a>
 
 									<Link href="/myquestions">
 										<p className="text-sm md:text-lg text-white font-bold dark:text-white cursor-pointer">
